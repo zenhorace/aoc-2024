@@ -10,8 +10,7 @@ import (
 
 var (
 	validMul = regexp.MustCompile(`mul\([0-9]{1,3},[0-9]{1,3}\)`)
-	dontRE   = regexp.MustCompile(`don\'t\(\)`)
-	doRE     = regexp.MustCompile(`do\(\)`)
+	OperRE   = regexp.MustCompile(`mul\([0-9]{1,3},[0-9]{1,3}\)|don\'t\(\)|do\(\)`)
 )
 
 func main() {
@@ -24,36 +23,20 @@ func main() {
 }
 
 func part2(b []byte) {
-	mulIdx := validMul.FindAllIndex(b, -1)
-	found := validMul.FindAll(b, -1)
-	doIdx := doRE.FindAllIndex(b, -1)
-	dontIdx := dontRE.FindAllIndex(b, -1)
-	doPtr, dontPtr := 0, 0
+	found := OperRE.FindAll(b, -1)
 
+	do := true
 	sum := 0
-	for i, v := range mulIdx {
-		doPtr = advance(doIdx, doPtr, v[0])
-		dontPtr = advance(dontIdx, dontPtr, v[0])
-
-		if v[0] < dontIdx[dontPtr][0] {
-			sum += mul(found[i])
-			continue
-		}
-
-		if dontIdx[dontPtr][0] < doIdx[doPtr][0] && doIdx[doPtr][0] < v[0] {
-			sum += mul(found[i])
+	for _, v := range found {
+		if "don't()" == string(v) {
+			do = false
+		} else if "do()" == string(v) {
+			do = true
+		} else if do {
+			sum += mul(v)
 		}
 	}
 	println("pt2:", sum)
-}
-
-func advance(indexes [][]int, curr, opIdx int) int {
-	for i := curr; i < len(indexes)-1; i++ {
-		if indexes[i][0] > opIdx || indexes[i+1][0] > opIdx {
-			return i
-		}
-	}
-	return len(indexes) - 1
 }
 
 func part1(b []byte) {
@@ -63,7 +46,7 @@ func part1(b []byte) {
 		sum += mul(v)
 	}
 
-	println(sum)
+	println("pt1:", sum)
 }
 
 func mul(v []byte) int {
