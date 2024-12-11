@@ -19,6 +19,7 @@ func (p pos) antinode(other pos) pos {
 	dY := p.y - other.y
 	return pos{x: p.x + dX, y: p.y + dY}
 }
+
 func (p pos) allAntinodes(other pos) (res []pos) {
 	dX := p.x - other.x
 	dY := p.y - other.y
