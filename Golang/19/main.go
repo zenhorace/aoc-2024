@@ -18,8 +18,8 @@ func main() {
 	println(len(towels))
 
 	count := 0
-	var sum int64
-	memo := make(map[string]int64)
+	var sum int
+	memo := make(map[string]int)
 	for _, p := range patterns {
 		if possible(p, towels) {
 			count++
@@ -43,14 +43,14 @@ func possible(pattern string, towels []string) bool {
 	return false
 }
 
-func allPossible(pattern string, towels []string, memo map[string]int64) int64 {
+func allPossible(pattern string, towels []string, memo map[string]int) int {
 	if ans, ok := memo[pattern]; ok {
 		return ans
 	}
 	if len(pattern) == 0 {
 		return 1
 	}
-	var count int64
+	var count int
 	for _, t := range towels {
 		if strings.HasPrefix(pattern, t) {
 			count += allPossible(strings.TrimPrefix(pattern, t), towels, memo)
